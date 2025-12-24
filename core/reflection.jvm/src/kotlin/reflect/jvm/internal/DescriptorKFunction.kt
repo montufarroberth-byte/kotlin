@@ -48,7 +48,7 @@ internal class DescriptorKFunction private constructor(
     FunctionBase<Any?>, FunctionWithAllInvokes {
 
     constructor(container: KDeclarationContainerImpl, name: String, signature: String, boundReceiver: Any?)
-        : this(container, name, signature, null, boundReceiver, KCallableOverriddenStorage.EMPTY)
+            : this(container, name, signature, null, boundReceiver, KCallableOverriddenStorage.EMPTY)
 
     constructor(
         container: KDeclarationContainerImpl,
