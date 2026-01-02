@@ -6822,6 +6822,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("inVarianceVsParameterBound.kt")
+      public void testInVarianceVsParameterBound() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/inference/inVarianceVsParameterBound.kt");
+      }
+
+      @Test
       @TestMetadata("integerLiteralAsComparable.kt")
       public void testIntegerLiteralAsComparable() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/integerLiteralAsComparable.kt");
