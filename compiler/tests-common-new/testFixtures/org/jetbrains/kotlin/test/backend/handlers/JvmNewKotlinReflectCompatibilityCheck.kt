@@ -108,8 +108,8 @@ class JvmNewKotlinReflectCompatibilityCheck(testServices: TestServices) : JvmBin
         if (kotlinReflectDumpMismatch) {
             assertions.assertFalse(skipAsserts) {
                 "Cannot use both directives: " +
-                    "SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK and KOTLIN_REFLECT_DUMP_MISMATCH. " +
-                    "Pick one"
+                        "SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK and KOTLIN_REFLECT_DUMP_MISMATCH. " +
+                        "Pick one"
             }
             val a = runCatching { assertions.assertEqualsToFile(k1ReflectFile, k1ReflectDump) }
             val b = runCatching { assertions.assertEqualsToFile(newReflectFile, newReflectDump) }
