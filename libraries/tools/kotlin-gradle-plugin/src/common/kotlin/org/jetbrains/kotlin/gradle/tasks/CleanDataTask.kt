@@ -12,6 +12,9 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
+import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStoreImpl
+import org.jetbrains.kotlin.gradle.tasks.internal.cleanDir
+import java.nio.file.Path
 import java.time.Duration
 import java.time.Instant
 
@@ -21,12 +24,19 @@ import java.time.Instant
 @DisableCachingByDefault
 open class CleanDataTask : DefaultTask() {
 
+    @Deprecated("Scheduled for removal in Kotlin 2.4", replaceWith = ReplaceWith("storeProvider"), level = DeprecationLevel.WARNING )
+    var cleanableStoreProvider: Provider<CleanableStore>
+        get() = storeProvider.map { CleanableStore.Companion[it.toString()] }
+        set(value) {
+            storeProvider = value.map { (it as CleanableStoreImpl).dir.toPath() }
+        }
+
     /**
      * Path to folder.
      * Use path instead of file to avoid file scanning for change check
      */
     @Input
-    lateinit var cleanableStoreProvider: Provider<CleanableStore>
+    lateinit var storeProvider: Provider<Path>
 
     /**
      * Time to live in days
@@ -38,9 +48,7 @@ open class CleanDataTask : DefaultTask() {
     @TaskAction
     fun exec() {
         val expirationDate = Instant.now().minus(Duration.ofDays(timeToLiveInDays))
-
-        cleanableStoreProvider.get().cleanDir(expirationDate)
-
+        storeProvider.get().toFile().cleanDir(expirationDate)
     }
 
     companion object {

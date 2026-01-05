@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.tasks.CleanDataTask
 import org.jetbrains.kotlin.gradle.tasks.CleanDataTask.Companion.deprecationMessage
-import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAware
 
@@ -64,9 +63,9 @@ abstract class D8Plugin internal constructor() :
                 it.logger.warn(deprecationMessage(it.path))
             }
 
-            it.cleanableStoreProvider = spec
+            it.storeProvider = spec
                 .installationDirectory
-                .map { CleanableStore.Companion[it.asFile.path] }
+                .map { it.asFile.toPath() }
             it.group = TASKS_GROUP_NAME
             it.description = "Clean unused local d8 version"
         }

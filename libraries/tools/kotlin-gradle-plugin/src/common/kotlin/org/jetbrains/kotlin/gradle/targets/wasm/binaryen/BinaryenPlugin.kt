@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.tasks.CleanDataTask
 import org.jetbrains.kotlin.gradle.tasks.CleanDataTask.Companion.deprecationMessage
-import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAware
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
@@ -66,9 +65,8 @@ abstract class BinaryenPlugin internal constructor() :
                 it.logger.warn(deprecationMessage(it.path))
             }
 
-            it.cleanableStoreProvider = spec
-                .installationDirectory
-                .map { CleanableStore.Companion[it.asFile.path] }
+            it.storeProvider = spec
+                .installationDirectory.map { it.asFile.toPath() }
             it.group = TASKS_GROUP_NAME
             it.description = "Clean unused local binaryen version"
         }

@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.RootPackageJsonTask
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.tasks.CleanDataTask
 import org.jetbrains.kotlin.gradle.tasks.CleanDataTask.Companion.deprecationMessage
-import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
@@ -309,9 +308,9 @@ internal class NodeJsRootPluginApplier(
                 it.logger.warn(deprecationMessage(it.path))
             }
 
-            it.cleanableStoreProvider = nodeJs
+            it.storeProvider = nodeJs
                 .installationDirectory
-                .map { CleanableStore.Companion[it.asFile.path] }
+                .map { it.asFile.toPath() }
             it.group = NodeJsRootPlugin.TASKS_GROUP_NAME
             it.description = "Clean unused local node version"
         }

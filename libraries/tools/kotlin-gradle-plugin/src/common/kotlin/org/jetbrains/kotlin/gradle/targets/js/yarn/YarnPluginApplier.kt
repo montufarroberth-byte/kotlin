@@ -130,9 +130,7 @@ internal class YarnPluginApplier(
                 it.logger.warn(deprecationMessage(it.path))
             }
 
-            it.cleanableStoreProvider = yarnSpec
-                .installationDirectory
-                .map { CleanableStore.Companion[it.asFile.path] }
+            it.storeProvider = yarnSpec.installationDirectory.map { it.asFile.toPath() }
             it.description = "Clean unused local yarn version"
         }
 
