@@ -37,7 +37,7 @@ internal fun getAllMembers(kClass: KClassImpl<*>): Collection<DescriptorKCallabl
             )
         ) { (_, member) ->
             doNeedToFilterOutStatics && member.isStatic ||
-                member.isPackagePrivate && member.container.jClass.`package` != kClass.java.`package`
+                    member.isPackagePrivate && member.container.jClass.`package` != kClass.java.`package`
         }
         false -> HashMap(fakeOverrideMembers.members)
     }
@@ -125,8 +125,8 @@ private fun DescriptorKCallable<*>.isStaticMethodInInterface(kClass: KClassImpl<
 
 private fun skipDeclaredMember(kClass: KClassImpl<*>, member: DescriptorKCallable<*>): Boolean =
     member.visibility == KVisibility.PRIVATE ||
-        // static methods (but not fields) in interfaces are never inherited (neither in Java nor in Kotlin)
-        member.isStaticMethodInInterface(kClass)
+            // static methods (but not fields) in interfaces are never inherited (neither in Java nor in Kotlin)
+            member.isStaticMethodInInterface(kClass)
 
 internal fun computeFakeOverrideMembers(kClass: KClassImpl<*>): FakeOverrideMembers {
     val javaSignaturesMap: MutableMembersJavaSignatureMap = HashMap()
