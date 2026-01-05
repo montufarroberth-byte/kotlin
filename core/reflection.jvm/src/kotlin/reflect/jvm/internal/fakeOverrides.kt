@@ -5,9 +5,9 @@
 
 package kotlin.reflect.jvm.internal
 
+import org.jetbrains.kotlin.utils.newHashMapWithExpectedSize
 import java.lang.reflect.Type
 import java.lang.reflect.TypeVariable
-import java.util.*
 import kotlin.metadata.ClassKind
 import kotlin.reflect.*
 import kotlin.reflect.full.createType
@@ -21,20 +21,25 @@ import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.javaMethod
 
 internal fun getAllMembers(kClass: KClassImpl<*>): Collection<DescriptorKCallable<*>> {
-    val membersReadOnly = kClass.data.value.fakeOverrideMembers
+    val fakeOverrideMembers = kClass.data.value.fakeOverrideMembers
     // Kotlin doesn't have statics (unless it's enum), and it never inherits statics from Java
     val isKotlin = kClass.java.isKotlin
     val doNeedToFilterOutStatics =
-        membersReadOnly.containsInheritedStatics && kClass.classKind != ClassKind.ENUM_CLASS && isKotlin
-    val doNeedToShrinkMembers = membersReadOnly.containsPackagePrivate || doNeedToFilterOutStatics
+        fakeOverrideMembers.containsInheritedStatics && kClass.classKind != ClassKind.ENUM_CLASS && isKotlin
+    val doNeedToShrinkMembers = fakeOverrideMembers.containsPackagePrivate || doNeedToFilterOutStatics
     val membersMutable = when (doNeedToShrinkMembers) {
-        true -> lazyOf(
-            membersReadOnly.members.filterNotTo(HashMap(membersReadOnly.members.size)) { (_, member) ->
-                doNeedToFilterOutStatics && member.isStatic ||
-                    member.isPackagePrivate && member.container.jClass.`package` != kClass.java.`package`
-            }
-        )
-        false -> lazy(LazyThreadSafetyMode.NONE) { HashMap(membersReadOnly.members) }
+        true -> fakeOverrideMembers.members.filterNotTo(
+            newHashMapWithExpectedSize(
+                // We expect that all non-transitive operations below (like filtering out statics or adding privates)
+                // do not change the final size of the collection significantly.
+                // We expect the size to stay more or less the same.
+                expectedSize = fakeOverrideMembers.members.size
+            )
+        ) { (_, member) ->
+            doNeedToFilterOutStatics && member.isStatic ||
+                member.isPackagePrivate && member.container.jClass.`package` != kClass.java.`package`
+        }
+        false -> HashMap(fakeOverrideMembers.members)
     }
     // Privates don't override anything, so it's fine to collect them in a separate map
     val kotlinDeclaredPrivates: MutableMembersKotlinSignatureMap = HashMap()
@@ -46,7 +51,7 @@ internal fun getAllMembers(kClass: KClassImpl<*>): Collection<DescriptorKCallabl
             declaredMember.isStaticMethodInInterface(kClass) -> {
                 check(!isKotlin) { "Kotlin doesn't have statics. '${declaredMember.name}' appears to be declared static member in '${kClass.simpleName}'" }
                 val signature = declaredMember.toEquatableCallableSignature(EqualityMode.JavaSignature)
-                membersMutable.value[signature] = declaredMember
+                membersMutable[signature] = declaredMember
             }
 
             // private members are not inherited, but immediate private members must appear in the 'members' list
@@ -56,19 +61,12 @@ internal fun getAllMembers(kClass: KClassImpl<*>): Collection<DescriptorKCallabl
                     kotlinDeclaredPrivates[signature] = declaredMember
                 } else {
                     val signature = declaredMember.toEquatableCallableSignature(EqualityMode.JavaSignature)
-                    membersMutable.value[signature] = declaredMember
+                    membersMutable[signature] = declaredMember
                 }
             }
         }
     }
-    val result = (if (membersMutable.isInitialized()) membersMutable.value else membersReadOnly.members).values
-    return addCollectionsOptimizingEmpty(result, kotlinDeclaredPrivates.values)
-}
-
-private fun <T> addCollectionsOptimizingEmpty(a: Collection<T>, b: Collection<T>): Collection<T> = when {
-    a.isEmpty() -> b
-    b.isEmpty() -> a
-    else -> a + b
+    return membersMutable.values + kotlinDeclaredPrivates.values
 }
 
 internal fun starProjectionSupertypesAreNotPossible(containerForDebug: Any): Nothing =
