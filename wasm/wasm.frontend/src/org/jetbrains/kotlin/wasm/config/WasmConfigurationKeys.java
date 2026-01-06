@@ -50,4 +50,7 @@ public class WasmConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> WASM_COMMAND_MODULE =
             CompilerConfigurationKey.create("use command module initialization (_initialize export).");
+
+    public static final CompilerConfigurationKey<Boolean> WASM_DISABLE_CROSS_FILE_OPTIMISATIONS =
+            CompilerConfigurationKey.create("Disables cross file optimizations. Required to for IC.");
 }
