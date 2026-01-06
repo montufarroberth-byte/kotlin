@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.wasm.test.lowering
 
 import org.jetbrains.kotlin.backend.common.LoweringPrerequisitesTest
-import org.jetbrains.kotlin.backend.wasm.getWasmLowerings
+import org.jetbrains.kotlin.backend.wasm.wasmLowerings
 import org.jetbrains.kotlin.backend.wasm.wasmLoweringsOfTheFirstPhase
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -36,7 +36,7 @@ class WasmLoweringPrerequisitesTest : LoweringPrerequisitesTest() {
                 configuration.put(WasmConfigurationKeys.WASM_FORCE_DEBUG_FRIENDLY_COMPILATION, isDebugFriendlyCompilation)
                 configuration.put(WasmConfigurationKeys.WASM_DISABLE_CROSS_FILE_OPTIMISATIONS, disableCrossFileOptimisations)
                 checkPrerequisites(
-                    getWasmLowerings(configuration = configuration)
+                    wasmLowerings
                 )
             }
         }
