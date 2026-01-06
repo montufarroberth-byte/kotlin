@@ -238,7 +238,7 @@ internal fun <T> jsYieldStar(value: T): T
 // @JsIntrinsic
 // TODO: after the next bootstrap drop the body of this function, and uncomment the @JsIntrinsic annotation;
 internal fun jsGenerateInterfaceSymbol(): dynamic =
-    nextAssociatedObjectId()
+    generateInterfaceSymbolById()
 
 /**
  * Depending on the target ES edition, calls transforms either

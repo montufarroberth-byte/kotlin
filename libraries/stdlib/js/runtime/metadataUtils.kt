@@ -12,14 +12,21 @@ import kotlin.internal.UsedFromCompilerGeneratedCode
 @Suppress("MUST_BE_INITIALIZED")
 private var globalInterfaceId: dynamic
 
+// TODO: Merge the following two functions into one after the next boostrap
 @UsedFromCompilerGeneratedCode
-internal fun generateInterfaceId(): String {
+internal fun generateInterfaceId(): Int {
     if (globalInterfaceId === VOID) {
         globalInterfaceId = 0
     }
     globalInterfaceId = globalInterfaceId.unsafeCast<Int>() + 1
-    return "#__interface_$globalInterfaceId"
+    return globalInterfaceId
 }
+
+@UsedFromCompilerGeneratedCode
+internal fun generateInterfaceSymbolById(): String {
+    return "#__interface_${generateInterfaceId()}"
+}
+
 
 @Suppress("MUST_BE_INITIALIZED")
 private var globalAssociatedObjectId: dynamic

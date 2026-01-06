@@ -107,7 +107,7 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                 if (backendContext.es6mode) {
                     JsInvocation(JsNameRef("Symbol"))
                 } else {
-                    JsInvocation(context.getNameForStaticFunction(symbols.generateInterfaceId.owner).makeRef())
+                    JsInvocation(context.getNameForStaticFunction(symbols.generateInterfaceSymbolById.owner).makeRef())
                 }
             }
 
