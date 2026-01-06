@@ -20,11 +20,11 @@ class SmokeJvmClasspathSnapshottingMetricsTest : BaseCompilationTest() {
     fun smokeTestIncrementalCompilationMetrics(strategyConfig: CompilerExecutionStrategyConfiguration) {
         val kotlinToolchain = strategyConfig.first
         val executionPolicy = strategyConfig.second
-        val snapshottingOperation = kotlinToolchain.jvm.createClasspathSnapshottingOperation(currentKotlinStdlibLocation)
+        val snapshottingOperation = kotlinToolchain.jvm.classpathSnapshottingOperationBuilder(currentKotlinStdlibLocation)
         val metricsCollector = TestBuildMetricsCollector()
         snapshottingOperation[METRICS_COLLECTOR] = metricsCollector
         kotlinToolchain.createBuildSession().use {
-            it.executeOperation(snapshottingOperation, executionPolicy)
+            it.executeOperation(snapshottingOperation.build(), executionPolicy)
         }
         val actualNames = metricsCollector.all().map { it.name }.toSet()
         val expectedNames = baseExpectedMetricNames + parseInlineLocalClassMetricNames
@@ -38,12 +38,12 @@ class SmokeJvmClasspathSnapshottingMetricsTest : BaseCompilationTest() {
     fun smokeTestIncrementalCompilationMetricsNoInlineLocalClassesParsing(strategyConfig: CompilerExecutionStrategyConfiguration) {
         val kotlinToolchain = strategyConfig.first
         val executionPolicy = strategyConfig.second
-        val snapshottingOperation = kotlinToolchain.jvm.createClasspathSnapshottingOperation(currentKotlinStdlibLocation)
+        val snapshottingOperation = kotlinToolchain.jvm.classpathSnapshottingOperationBuilder(currentKotlinStdlibLocation)
         val metricsCollector = TestBuildMetricsCollector()
         snapshottingOperation[METRICS_COLLECTOR] = metricsCollector
         snapshottingOperation[PARSE_INLINED_LOCAL_CLASSES] = false
         kotlinToolchain.createBuildSession().use {
-            it.executeOperation(snapshottingOperation, executionPolicy)
+            it.executeOperation(snapshottingOperation.build(), executionPolicy)
         }
         val actualNames = metricsCollector.all().map { it.name }.toSet()
         val expectedNames = baseExpectedMetricNames
