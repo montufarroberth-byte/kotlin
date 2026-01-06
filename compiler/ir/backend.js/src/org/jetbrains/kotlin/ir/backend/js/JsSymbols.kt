@@ -71,7 +71,9 @@ class JsSymbols(
 
     override val throwIAE: IrSimpleFunctionSymbol = CallableIds.throwIae.functionSymbol()
 
-    override val stringBuilder = ClassIds.StringBuilder.classSymbolOrNull() ?: TODO("Not implemented")
+    private val _stringBuilder = ClassIds.StringBuilder.classSymbolOrNull()
+    override val stringBuilder: IrClassSymbol
+        get() = _stringBuilder ?: TODO("Not implemented")
 
     override val getContinuation = CallableIds.getContinuation.functionSymbol()
 
