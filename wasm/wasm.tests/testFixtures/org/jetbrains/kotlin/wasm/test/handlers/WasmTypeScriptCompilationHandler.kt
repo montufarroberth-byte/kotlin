@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.wasm.test.handlers
 
 import org.jetbrains.kotlin.js.JavaScript
+import org.jetbrains.kotlin.js.test.handlers.JsTypeScriptCompilationHandler.Companion.getMainTsFile
 import org.jetbrains.kotlin.js.test.handlers.TypeScriptCompilation
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.services.TestServices
@@ -22,12 +23,7 @@ class WasmTypeScriptCompilationHandler(testServices: TestServices) : AbstractWas
         val allDirectives = moduleStructure.allDirectives
         if (WasmEnvironmentConfigurationDirectives.CHECK_TYPESCRIPT_DECLARATIONS !in allDirectives) return
 
-        val originalTestFile = testServices.moduleStructure.originalTestDataFiles.first()
-        val mainTsFile = originalTestFile
-            .parentFile
-            .resolve(originalTestFile.nameWithoutExtension + "__main.ts")
-            .takeIf { it.exists() }
-            ?: return
+        val mainTsFile = getMainTsFile(testServices, ".ts") ?: return
 
         val outputDir = testServices.getWasmTestOutputDirectoryForMode("dev")
 
@@ -49,8 +45,7 @@ class WasmTypeScriptCompilationHandler(testServices: TestServices) : AbstractWas
             File(allDirectives[WasmEnvironmentConfigurationDirectives.PATH_TO_NODE_DIR].first()),
         ).processAfterAllModules()
 
-        // Copy the compiled TypeScript artifact into directories corresponding to each translation mode,
-        // so that tests that only support e.g. the per-module mode don't fail because of missing artifact.
+        // Copy the compiled TypeScript artifact into directories corresponding to each translation mode
         for (mode in listOf("dce", "dev")) {
             if (mode == "dev") {
                 // The actual compiled artifact is in the directory for the FULL_DEV mode.

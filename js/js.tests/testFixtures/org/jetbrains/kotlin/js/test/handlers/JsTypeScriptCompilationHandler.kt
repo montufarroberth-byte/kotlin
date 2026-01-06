@@ -24,14 +24,9 @@ class JsTypeScriptCompilationHandler(testServices: TestServices) : AbstractJsArt
 
         val outputFile = compiledTypeScriptOutput(testServices, TranslationMode.FULL_DEV)
 
-        val originalTestFile = testServices.moduleStructure.originalTestDataFiles.first()
         val mainModule = JsEnvironmentConfigurator.getMainModule(testServices)
         val moduleKind = JsEnvironmentConfigurator.getModuleKind(testServices, mainModule)
-        val mainTsFile = originalTestFile
-            .parentFile
-            .resolve(originalTestFile.nameWithoutExtension + "__main${moduleKind.tsExtension}")
-            .takeIf { it.exists() }
-            ?: return
+        val mainTsFile = getMainTsFile(testServices, moduleKind.tsExtension) ?: return
 
         TypeScriptCompilation(
             testServices,
@@ -61,6 +56,14 @@ class JsTypeScriptCompilationHandler(testServices: TestServices) : AbstractJsArt
             return JsEnvironmentConfigurator
                 .getJsArtifactsOutputDir(testServices, mode)
                 .resolve(originalTestFile.nameWithoutExtension + "__main${moduleKind.jsExtension}")
+        }
+
+        fun getMainTsFile(testServices: TestServices, extension: String): File? {
+            val originalTestFile = testServices.moduleStructure.originalTestDataFiles.first()
+            return originalTestFile
+                .parentFile
+                .resolve(originalTestFile.nameWithoutExtension + "__main$extension")
+                .takeIf { it.exists() }
         }
     }
 }
