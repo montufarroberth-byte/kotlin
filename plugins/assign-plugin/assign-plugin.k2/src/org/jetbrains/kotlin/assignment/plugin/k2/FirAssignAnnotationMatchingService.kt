@@ -12,18 +12,18 @@ import org.jetbrains.kotlin.name.FqName
 
 class FirAssignAnnotationMatchingService(
     session: FirSession,
-    annotationFqNames: Set<FqName>,
+    annotationClassIds: Set<FqName>,
 ) : AbstractSimpleClassPredicateMatchingService(session) {
     companion object {
-        fun getFactory(noArgAnnotationFqNames: List<String>): Factory {
+        fun getFactory(annotations: List<String>): Factory {
             return Factory { session ->
-                FirAssignAnnotationMatchingService(session, noArgAnnotationFqNames.map { FqName(it) }.toSet())
+                FirAssignAnnotationMatchingService(session, annotations.map { FqName(it) }.toSet())
             }
         }
     }
 
     override val predicate: DeclarationPredicate = DeclarationPredicate.create {
-        annotated(annotationFqNames) or metaAnnotated(annotationFqNames, includeItself = true)
+        annotated(annotationClassIds) or metaAnnotated(annotationClassIds, includeItself = true)
     }
 }
 
