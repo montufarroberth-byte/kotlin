@@ -19,6 +19,7 @@ import java.time.Instant
  */
 
 @Deprecated("Scheduled for removal in Kotlin 2.4")
+@Suppress("DEPRECATION")
 interface CleanableStore : Serializable {
     fun cleanDir(expirationDate: Instant)
 

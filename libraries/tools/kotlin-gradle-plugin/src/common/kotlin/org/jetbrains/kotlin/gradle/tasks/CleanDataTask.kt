@@ -11,24 +11,22 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
-import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStoreImpl
 import org.jetbrains.kotlin.gradle.tasks.internal.cleanDir
 import java.nio.file.Path
 import java.time.Duration
 import java.time.Instant
 
 /**
- * Task to clean all old unused loaded files from registered stores in [CleanableStore].
+ * Task to clean all old unused loaded files from [storeProvider].
  */
 @DisableCachingByDefault
 open class CleanDataTask : DefaultTask() {
-
-    @Deprecated("Scheduled for removal in Kotlin 2.4", replaceWith = ReplaceWith("storeProvider"), level = DeprecationLevel.WARNING )
-    var cleanableStoreProvider: Provider<CleanableStore>
-        get() = storeProvider.map { CleanableStore.Companion[it.toString()] }
+    @Deprecated("Scheduled for removal in Kotlin 2.4", level = DeprecationLevel.WARNING)
+    @Suppress("DEPRECATION")
+    var cleanableStoreProvider: Provider<org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore>
+        get() = storeProvider.map { org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore.Companion[it.toString()] }
         set(value) {
-            storeProvider = value.map { (it as CleanableStoreImpl).dir.toPath() }
+            storeProvider = value.map { (it as org.jetbrains.kotlin.gradle.tasks.internal.CleanableStoreImpl).dir.toPath() }
         }
 
     /**

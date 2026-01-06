@@ -14,6 +14,7 @@ import java.nio.file.attribute.FileTime
 import java.time.Instant
 
 @Deprecated("Scheduled for removal in Kotlin 2.4")
+@Suppress("DEPRECATION")
 internal class CleanableStoreImpl(dirPath: String) : CleanableStore {
     internal val dir = File(dirPath)
 

@@ -9,7 +9,7 @@ import java.io.File
 import java.nio.file.Files
 import java.time.Instant
 
-fun File.cleanDir(expirationDate: Instant) {
+internal fun File.cleanDir(expirationDate: Instant) {
     fun modificationDate(file: File): Instant {
         return Files.getLastModifiedTime(file.toPath()).toInstant()
     }
