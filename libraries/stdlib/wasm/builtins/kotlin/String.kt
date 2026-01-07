@@ -155,3 +155,4 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
 
 internal fun WasmCharArray.createString(): String =
     String(null, this.len(), this)
+    
